@@ -13,8 +13,8 @@
     "medusa"
   ],
   "scripts": {
-    "build": "medusa build",
-    "start": "medusa db:migrate && medusa start",
+    "build": "medusa build && cd .medusa/server && npm install --omit=dev --no-package-lock",
+    "start": "cd .medusa/server && npx medusa db:migrate && npx medusa start",
     "dev": "medusa develop",
     "predeploy": "medusa db:migrate",
     "test:integration:http": "TEST_TYPE=integration:http NODE_OPTIONS=--experimental-vm-modules jest --silent=false --runInBand --forceExit",
