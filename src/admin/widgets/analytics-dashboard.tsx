@@ -1,11 +1,12 @@
 import { defineWidgetConfig } from "@medusajs/admin-sdk"
 import { Container, Heading, Text, Button, Badge } from "@medusajs/ui"
 
-// After creating a project at https://clarity.microsoft.com,
-// paste the 10-character project ID here (or set VITE_CLARITY_PROJECT_ID
-// in the backend .env and this reads it automatically).
+// Live Clarity project for recession.netlify.app. Rotate via the
+// Clarity dashboard if you ever need a fresh one; VITE_CLARITY_PROJECT_ID
+// env var overrides this at build time if set.
 const CLARITY_PROJECT_ID =
-  (import.meta as { env?: Record<string, string> }).env?.VITE_CLARITY_PROJECT_ID || ""
+  (import.meta as { env?: Record<string, string> }).env?.VITE_CLARITY_PROJECT_ID ||
+  "xnidslu1jm"
 
 const AnalyticsDashboardWidget = () => {
   const configured = CLARITY_PROJECT_ID.length > 0
