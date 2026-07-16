@@ -5,34 +5,11 @@ loadEnv(process.env.NODE_ENV || 'development', process.cwd())
 // The server's own public URL. Railway auto-populates RAILWAY_PUBLIC_DOMAIN
 // on every service; fall back to a manually-set MEDUSA_BACKEND_URL if
 // running elsewhere. Ultimate fallback is localhost for dev.
-const backendUrl =
-  process.env.MEDUSA_BACKEND_URL ||
-  (process.env.RAILWAY_PUBLIC_DOMAIN
-    ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
-    : 'http://localhost:9000')
-
-// File storage — explicit local provider so we control the backend_url used
-// when composing image URLs. Without this, Medusa's default provider
-// hard-codes localhost:9000 and the admin UI / storefront get broken
-// image links.
 //
-// Uploads land in .medusa/server/static. On Railway, mount a persistent
-// volume at /app/.medusa/server/static so files survive redeploys —
-// otherwise every deploy wipes them. See project memory for the ops step.
-const fileModule = {
-  resolve: '@medusajs/medusa/file',
-  options: {
-    providers: [
-      {
-        resolve: '@medusajs/medusa/file-local-next',
-        id: 'local',
-        options: {
-          upload_dir: 'static',
-          backend_url: `${backendUrl}/static`,
-        },
-      },
-    ],
-  },
+// This is exported into process.env so Medusa's default file provider
+// composes image URLs against the public host instead of localhost:9000.
+if (!process.env.MEDUSA_BACKEND_URL && process.env.RAILWAY_PUBLIC_DOMAIN) {
+  process.env.MEDUSA_BACKEND_URL = `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`
 }
 
 // Stripe is only loaded when its API key is present. Deploying without
@@ -71,5 +48,5 @@ module.exports = defineConfig({
       cookieSecret: process.env.COOKIE_SECRET || "supersecret",
     }
   },
-  modules: [fileModule, ...paymentModules],
+  modules: paymentModules,
 })
